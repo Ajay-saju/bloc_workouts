@@ -130,13 +130,36 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return (Scaffold(
       body: SafeArea(
-          child: Column(
-        children: [
-          BlocBuilder<CounterCubit, CounterState>(builder: (context, state) {
-            return Text(state.counterValue.toString());
-          })
-        ],
-      )),
+          child: Center(
+            child: Column(
+              children: [
+                BlocConsumer<CounterCubit, CounterState>(
+                    listener: (context, state) {
+                  if (state.isIncremented == true) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('Increment'),
+                      duration: Duration(milliseconds: 300),
+                    ));
+                  } else if (state.isIncremented == false) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('Decrement'),
+                      duration: Duration(milliseconds: 300),
+                    ));
+                  }
+                }, builder: (context, state) {
+                  if (state.counterValue > 0) {
+                    return Text(
+                        'Positive value ${state.counterValue.toString()}');
+                  } else {
+                    return Text(
+                        'Negative value ${state.counterValue.toString()}');
+                  }
+
+                  // return Text(state.counterValue.toString());
+                })
+              ],
+            ),
+          )),
       floatingActionButton:
           Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
         FloatingActionButton(
@@ -147,7 +170,7 @@ class MyHomePage extends StatelessWidget {
         ),
         FloatingActionButton(
           onPressed: () {
-             BlocProvider.of<CounterCubit>(context).decrementCounter();
+            BlocProvider.of<CounterCubit>(context).decrementCounter();
           },
           child: const Text('-'),
         )
